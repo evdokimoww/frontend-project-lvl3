@@ -12,16 +12,20 @@
         <div class="row">
             <div class="col-md-10 col-lg-8 mx-auto">
                 <h1>RSS Агрегатор</h1>
-                <form>
+                <form class="form-floating">
                     <div class="row">
                         <div class="col">
-                            <input type="text" class="form-control w-100" id="rss-link" placeholder="Ссылка">
-                            <label for="rss-link">Вставьте ссылку</label>
+                            <div class="form-floating">
+                                <input class="form-control w-100" id="url-input" name="url" aria-label="url" placeholder="Ссылка">
+                                <label for="url-input">Вставьте ссылку</label>
+                            </div>
                         </div>
                         <div class="col-auto">
-                            <button type="submit" class="btn btn-primary mb-3">Добавить</button>
+                            <button type="submit" class="h-100 btn btn-lg btn-success px-sm-5">Добавить</button>
                         </div>
                     </div>
+                    <p class="mt-2 mb-0 text-muted">Пример: https://ru.hexlet.io/lessons.rss</p>
+                    <p class="feedback m-0 position-absolute small text-danger"></p>
                 </form>
             </div>
         </div>
