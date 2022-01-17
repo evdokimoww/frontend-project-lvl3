@@ -1,29 +1,29 @@
-const renderMessage = (state, value, form) => {
+const renderMessage = (state, value, form, i18nInstance) => {
   const p = form.querySelector('.feedback');
   const input = form.querySelector('input');
 
   switch (value) {
-    case 'success adding':
+    case 'SuccessAdding':
       input.classList.remove('is-invalid');
       p.classList.remove('text-danger');
       p.classList.add('text-success');
-      p.textContent = 'RSS успешно загружен';
+      p.textContent = i18nInstance.t(`messages.${value}`);
       form.reset();
       input.focus();
       break;
 
-    case 'url must be a valid URL':
+    case 'ValidationError':
       input.classList.add('is-invalid');
       p.classList.remove('text-success');
       p.classList.add('text-danger');
-      p.textContent = 'Ссылка должна быть валидным URL';
+      p.textContent = i18nInstance.t(`messages.${value}`);
       break;
 
-    case 'duplicate url':
+    case 'DuplicateUrl':
       input.classList.add('is-invalid');
       p.classList.remove('text-success');
       p.classList.add('text-danger');
-      p.textContent = 'RSS уже существует';
+      p.textContent = i18nInstance.t(`messages.${value}`);
       break;
 
     default:
