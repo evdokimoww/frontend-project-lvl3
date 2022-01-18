@@ -5,6 +5,7 @@ import ru from './locales/ru';
 import downloadRss from './downloadRss';
 import generateFeeds from './generateFeeds';
 import generateItems from './generateItems';
+import updateRss from './updateRss';
 
 const checkDuplicate = (state, inboxUrl) => {
   const duplicate = state.feeds.filter(({ url }) => url === inboxUrl);
@@ -32,11 +33,13 @@ export default (i18nInstance) => {
     .then((t) => t);
 
   const state = {
-    inboxUrl: [],
+    inboxUrl: '',
     feeds: [],
     items: [],
+    updatedItems: [],
     message: '',
     formDisabled: false,
+    timerId: '',
   };
 
   const form = document.querySelector('form');
@@ -54,8 +57,18 @@ export default (i18nInstance) => {
       case 'inboxUrl':
         if (value !== '') {
           watchedState.formDisabled = true;
-          downloadRss(watchedState, value);
+          downloadRss(watchedState, value, state);
         }
+        break;
+
+      case 'items':
+        generateItems(state.items, i18nInstance);
+        watchedState.timerId = setTimeout(() => updateRss(watchedState, state.feeds), 5000);
+        break;
+
+      case 'updatedItems':
+        watchedState.items = value;
+        state.updatedItems = [];
         break;
 
       case 'feeds':
@@ -69,8 +82,8 @@ export default (i18nInstance) => {
         btn.disabled = value;
         break;
 
-      case 'items':
-        generateItems(state.items, i18nInstance);
+      case 'timerId':
+        console.log(value);
         break;
 
       default:
