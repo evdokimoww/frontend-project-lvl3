@@ -1,66 +1,12 @@
 import * as yup from 'yup';
 import onChange from 'on-change';
-import { uniqueId } from 'lodash';
-import axios from 'axios';
 import renderMessage from './validateWatchers';
 import ru from './locales/ru';
+import downloadRss from './downloadRss';
+import generateFeeds from './generateFeeds';
+import generateItems from './generateItems';
 
-const domParser = (string) => {
-  const parse = new DOMParser();
-  const doc = parse.parseFromString(string, 'text/xml');
-  const rss = doc.querySelector('rss');
-
-  if (!rss) return 'no rss';
-
-  const title = rss.querySelector('channel title').textContent;
-  const desc = rss.querySelector('channel description').textContent;
-  const items = rss.querySelectorAll('channel item');
-
-  const parsedItems = Array.from(items).map((item) => {
-    const itemTitle = item.querySelector('title').textContent;
-    const itemLink = item.querySelector('link').textContent;
-    const itemDesc = item.querySelector('description').textContent;
-    return { itemTitle, itemLink, itemDesc };
-  });
-
-  return { title, desc, items: parsedItems };
-};
-
-const downloadRss = (watchedState, url) => {
-  axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(url)}`)
-    .then((res) => {
-      const data = domParser(res.data.contents);
-
-      if (data === 'no rss') {
-        throw new Error('NO RSS');
-      }
-
-      const feedId = uniqueId();
-      watchedState.feeds.push({
-        id: feedId,
-        title: data.title,
-        description: data.desc,
-        url,
-      });
-
-      const feedItems = data.items.map(({ itemTitle, itemLink, itemDesc }) => ({
-        id: uniqueId(),
-        feedId,
-        title: itemTitle,
-        description: itemDesc,
-        link: itemLink,
-      }));
-      watchedState.items.push(...feedItems);
-    })
-    .catch((e) => {
-      if (e) {
-        // eslint-disable-next-line no-param-reassign
-        watchedState.message = 'NoValidRss';
-      }
-    });
-};
-
-const duplicateUrlCheck = (state, inboxUrl) => {
+const checkDuplicate = (state, inboxUrl) => {
   const duplicate = state.feeds.filter(({ url }) => url === inboxUrl);
   return duplicate.length > 0;
 };
@@ -78,7 +24,7 @@ export default (i18nInstance) => {
   i18nInstance
     .init({
       lng: 'ru',
-      debug: false,
+      debug: true,
       resources: {
         ru,
       },
@@ -113,9 +59,9 @@ export default (i18nInstance) => {
         break;
 
       case 'feeds':
-        console.log(state);
         watchedState.message = 'SuccessAdding';
         watchedState.inboxUrl = '';
+        generateFeeds(state.feeds, i18nInstance);
         break;
 
       case 'formDisabled':
@@ -124,6 +70,7 @@ export default (i18nInstance) => {
         break;
 
       case 'items':
+        generateItems(state.items, i18nInstance);
         break;
 
       default:
@@ -141,7 +88,7 @@ export default (i18nInstance) => {
       .then((data) => {
         if (typeof data === 'string') {
           watchedState.message = data;
-        } else if (duplicateUrlCheck(state, data.url)) {
+        } else if (checkDuplicate(state, data.url)) {
           watchedState.message = 'DuplicateUrl';
         } else {
           watchedState.inboxUrl = data.url;

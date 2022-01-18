@@ -6,5 +6,9 @@ export default {
       DuplicateUrl: 'RSS уже существует',
       NoValidRss: 'Ресурс не содержит валидный RSS',
     },
+    blocksTitle: {
+      feeds: 'Фиды',
+      posts: 'Посты',
+    },
   },
 };

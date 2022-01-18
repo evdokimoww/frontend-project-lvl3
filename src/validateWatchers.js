@@ -13,19 +13,7 @@ const renderMessage = (state, value, form, i18nInstance) => {
       break;
 
     case 'ValidationError':
-      input.classList.add('is-invalid');
-      p.classList.remove('text-success');
-      p.classList.add('text-danger');
-      p.textContent = i18nInstance.t(`messages.${value}`);
-      break;
-
     case 'NoValidRss':
-      input.classList.add('is-invalid');
-      p.classList.remove('text-success');
-      p.classList.add('text-danger');
-      p.textContent = i18nInstance.t(`messages.${value}`);
-      break;
-
     case 'DuplicateUrl':
       input.classList.add('is-invalid');
       p.classList.remove('text-success');
