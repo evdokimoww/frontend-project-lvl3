@@ -2,9 +2,9 @@ import axios from 'axios';
 import { uniqueId } from 'lodash';
 import domParser from './domParser';
 
-export default (watchedState, feeds) => {
+const updateRss = (watchedState, feeds) => {
   console.log('update');
-  feeds.forEach((feed) => {
+  feeds.reverse().forEach((feed) => {
     axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(feed.url)}`)
       .then((res) => {
         const data = domParser(res.data.contents);
@@ -16,8 +16,11 @@ export default (watchedState, feeds) => {
           description: itemDesc,
           link: itemLink,
         }));
+
         watchedState.updatedItems.unshift(...feedItems);
       })
       .catch((e) => e);
   });
 };
+
+export default updateRss;

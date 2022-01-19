@@ -39,7 +39,6 @@ export default (i18nInstance) => {
     updatedItems: [],
     message: '',
     formDisabled: false,
-    timerId: '',
   };
 
   const form = document.querySelector('form');
@@ -57,18 +56,18 @@ export default (i18nInstance) => {
       case 'inboxUrl':
         if (value !== '') {
           watchedState.formDisabled = true;
-          downloadRss(watchedState, value, state);
         }
         break;
 
       case 'items':
         generateItems(state.items, i18nInstance);
-        watchedState.timerId = setTimeout(() => updateRss(watchedState, state.feeds), 5000);
         break;
 
       case 'updatedItems':
-        watchedState.items = value;
-        state.updatedItems = [];
+        if (watchedState.items.length <= value.length) {
+          watchedState.items = value;
+          state.updatedItems = [];
+        }
         break;
 
       case 'feeds':
@@ -82,14 +81,15 @@ export default (i18nInstance) => {
         btn.disabled = value;
         break;
 
-      case 'timerId':
-        console.log(value);
-        break;
-
       default:
         throw new Error('watchedState error');
     }
   });
+
+  let timerId = setTimeout(function update() {
+    updateRss(watchedState, state.feeds);
+    timerId = setTimeout(update, 5000);
+  }, 5000);
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -105,6 +105,7 @@ export default (i18nInstance) => {
           watchedState.message = 'DuplicateUrl';
         } else {
           watchedState.inboxUrl = data.url;
+          downloadRss(watchedState, data.url, state);
         }
       });
   });
