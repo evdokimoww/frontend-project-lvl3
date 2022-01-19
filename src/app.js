@@ -3,9 +3,11 @@ import onChange from 'on-change';
 import renderMessage from './validateWatchers';
 import ru from './locales/ru';
 import downloadRss from './downloadRss';
-import generateFeeds from './generateFeeds';
-import generateItems from './generateItems';
+import renderFeeds from './renderFeeds';
+import renderItems from './renderItems';
 import updateRss from './updateRss';
+import renderModal from './renderModal';
+import markRead from './markRead';
 
 const checkDuplicate = (state, inboxUrl) => {
   const duplicate = state.feeds.filter(({ url }) => url === inboxUrl);
@@ -36,9 +38,10 @@ export default (i18nInstance) => {
     inboxUrl: '',
     feeds: [],
     items: [],
-    updatedItems: [],
     message: '',
     formDisabled: false,
+    modalId: '',
+    readPosts: [],
   };
 
   const form = document.querySelector('form');
@@ -60,7 +63,13 @@ export default (i18nInstance) => {
         break;
 
       case 'items':
-        generateItems(state.items, i18nInstance);
+        renderItems(state.items, i18nInstance);
+        Array.from(document.querySelectorAll('button[data-bs-toggle="modal"]'))
+          .map((button) => button.addEventListener('click', () => {
+            watchedState.modalId = button.dataset.id;
+            watchedState.readPosts.push(button.dataset.id);
+          }));
+        markRead(state.readPosts);
         break;
 
       case 'updatedItems':
@@ -73,12 +82,20 @@ export default (i18nInstance) => {
       case 'feeds':
         watchedState.message = 'SuccessAdding';
         watchedState.inboxUrl = '';
-        generateFeeds(state.feeds, i18nInstance);
+        renderFeeds(state.feeds, i18nInstance);
         break;
 
       case 'formDisabled':
         input.disabled = value;
         btn.disabled = value;
+        break;
+
+      case 'modalId':
+        renderModal(value, state.items);
+        break;
+
+      case 'readPosts':
+        markRead(value);
         break;
 
       default:
@@ -87,7 +104,7 @@ export default (i18nInstance) => {
   });
 
   let timerId = setTimeout(function update() {
-    updateRss(watchedState, state.feeds);
+    updateRss(watchedState, state.feeds, state.items);
     timerId = setTimeout(update, 5000);
   }, 5000);
 

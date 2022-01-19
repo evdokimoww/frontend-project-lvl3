@@ -26,6 +26,7 @@ export default (watchedState, url) => {
         description: itemDesc,
         link: itemLink,
       }));
+
       watchedState.items.unshift(...feedItems);
     })
     .catch((e) => {
