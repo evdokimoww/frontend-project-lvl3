@@ -15,6 +15,8 @@ const renderMessage = (state, value, form, i18nInstance) => {
     case 'ValidationError':
     case 'NoValidRss':
     case 'DuplicateUrl':
+    case 'NotBeEmpty':
+    case 'Network Error':
       input.classList.add('is-invalid');
       p.classList.remove('text-success');
       p.classList.add('text-danger');

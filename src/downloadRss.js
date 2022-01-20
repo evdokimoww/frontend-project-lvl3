@@ -30,8 +30,6 @@ export default (watchedState, url) => {
       watchedState.items.unshift(...feedItems);
     })
     .catch((e) => {
-      if (e) {
-        watchedState.message = 'NoValidRss';
-      }
+      watchedState.message = e.message;
     });
 };

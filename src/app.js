@@ -15,19 +15,19 @@ const checkDuplicate = (state, inboxUrl) => {
 };
 
 const schema = yup.object().shape({
-  url: yup.string().url().required(),
+  url: yup.string().url().min(1),
 });
 
 const validation = (obj) => (
   schema.validate(obj)
     .then((data) => data)
-    .catch((e) => e.name));
+    .catch((e) => e.message));
 
 export default (i18nInstance) => {
   i18nInstance
     .init({
       lng: 'ru',
-      debug: true,
+      debug: false,
       resources: {
         ru,
       },
@@ -116,8 +116,10 @@ export default (i18nInstance) => {
 
     validation(url)
       .then((data) => {
-        if (typeof data === 'string') {
-          watchedState.message = data;
+        if (data === 'url must be a valid URL') {
+          watchedState.message = 'ValidationError';
+        } else if (data === 'url must be at least 1 characters') {
+          watchedState.message = 'NotBeEmpty';
         } else if (checkDuplicate(state, data.url)) {
           watchedState.message = 'DuplicateUrl';
         } else {
