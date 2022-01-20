@@ -44,7 +44,7 @@ export default (i18nInstance) => {
     readPosts: [],
   };
 
-  const form = document.querySelector('form');
+  const form = document.querySelector('.rss-form');
   const btn = form.querySelector('button[type="submit"]');
   const input = form.querySelector('#url-input');
 
