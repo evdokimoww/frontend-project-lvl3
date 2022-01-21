@@ -7,3 +7,4 @@ import './style.css';
 const i18nInstance = i18next.createInstance();
 
 export default () => app(i18nInstance);
+// app(i18nInstance);

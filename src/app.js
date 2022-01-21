@@ -86,8 +86,13 @@ export default (i18nInstance) => {
         break;
 
       case 'formDisabled':
-        input.setAttribute('readonly', value);
-        btn.disabled = value;
+        if (value) {
+          input.setAttribute('readonly', value);
+          btn.disabled = value;
+        } else {
+          input.removeAttribute('readonly');
+          btn.disabled = value;
+        }
         break;
 
       case 'modalId':
