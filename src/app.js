@@ -86,7 +86,7 @@ export default (i18nInstance) => {
         break;
 
       case 'formDisabled':
-        input.disabled = value;
+        input.setAttribute('readonly', value);
         btn.disabled = value;
         break;
 
