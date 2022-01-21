@@ -8,7 +8,7 @@ export default (watchedState, url) => {
       const data = domParser(res.data.contents);
 
       if (data === 'no rss') {
-        throw new Error('NO RSS');
+        throw new Error('NoValidRss');
       }
 
       const feedId = uniqueId();

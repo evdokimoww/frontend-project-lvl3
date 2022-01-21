@@ -15,7 +15,7 @@ const checkDuplicate = (state, inboxUrl) => {
 };
 
 const schema = yup.object().shape({
-  url: yup.string().url().min(1),
+  url: yup.string().min(1).url(),
 });
 
 const validation = (obj) => (
