@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import onChange from 'on-change';
+import i18next from 'i18next';
 import renderMessage from './validateWatchers';
 import ru from './locales/ru';
 import downloadRss from './downloadRss';
@@ -23,7 +24,9 @@ const validation = (obj) => (
     .then((data) => data)
     .catch((e) => e.message));
 
-export default (i18nInstance) => {
+export default () => {
+  const i18nInstance = i18next.createInstance();
+
   i18nInstance
     .init({
       lng: 'ru',
