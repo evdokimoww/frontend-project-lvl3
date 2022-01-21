@@ -108,9 +108,9 @@ export default (i18nInstance) => {
     }
   });
 
-  let timerId = setTimeout(function update() {
-    updateRss(watchedState, state.feeds, state.items);
-    timerId = setTimeout(update, 5000);
+  setTimeout(function update() {
+    updateRss(watchedState, state);
+    setTimeout(update, 5000);
   }, 5000);
 
   form.addEventListener('submit', (e) => {
