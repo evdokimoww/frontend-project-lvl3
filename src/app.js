@@ -129,7 +129,7 @@ export default (i18nInstance) => {
           watchedState.message = 'DuplicateUrl';
         } else {
           watchedState.inboxUrl = data.url;
-          downloadRss(watchedState, data.url, state);
+          downloadRss(watchedState, data.url);
         }
       });
   });

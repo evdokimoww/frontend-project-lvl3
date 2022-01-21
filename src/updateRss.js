@@ -2,7 +2,10 @@ import axios from 'axios';
 import { uniqueId } from 'lodash';
 import domParser from './domParser';
 
-const updateRss = (watchedState, feeds, items) => {
+const updateRss = (watchedState, state) => {
+  console.log('update');
+  const { feeds, items } = state;
+
   feeds.reverse().forEach((feed) => {
     console.log('update');
     axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(feed.url)}`)
