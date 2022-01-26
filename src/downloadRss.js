@@ -7,24 +7,20 @@ export default (watchedState, url) => {
     .then((res) => {
       const data = domParser(res.data.contents);
 
-      if (data === 'no rss') {
-        throw new Error('NoValidRss');
-      }
-
       const feedId = uniqueId();
       watchedState.feeds.push({
         id: feedId,
-        title: data.title,
-        description: data.desc,
+        title: data.channelTitle,
+        description: data.channelDescription,
         url,
       });
 
-      const feedItems = data.items.map(({ itemTitle, itemLink, itemDesc }) => ({
+      const feedItems = data.items.map(({ title, link, description }) => ({
         id: uniqueId(),
         feedId,
-        title: itemTitle,
-        description: itemDesc,
-        link: itemLink,
+        title,
+        link,
+        description,
       }));
 
       watchedState.items.unshift(...feedItems);

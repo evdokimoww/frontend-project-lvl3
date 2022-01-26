@@ -111,10 +111,9 @@ export default () => {
     }
   });
 
-  setTimeout(function update() {
-    updateRss(watchedState, state);
-    setTimeout(update, 5000);
-  }, 5000);
+  const update = () => updateRss(watchedState, state)
+    .then(() => setTimeout(update, 5000))
+    .catch((e) => console.log('Update RSS error!', e));
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
