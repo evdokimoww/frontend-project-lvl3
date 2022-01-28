@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 import onChange from 'on-change';
 import i18next from 'i18next';
+import { setLocale, string } from 'yup';
 import ru from './locales/ru';
 
 import {
@@ -12,19 +13,28 @@ import {
 } from './render';
 import { updateRss, downloadRss } from './rss';
 
-const checkDuplicate = (state, inboxUrl) => {
-  const duplicate = state.feeds.filter(({ url }) => url === inboxUrl);
-  return duplicate.length > 0;
-};
+// const checkDuplicate = (state, inboxUrl) => {
+//   const duplicate = state.feeds.filter(({ url }) => url === inboxUrl);
+//   return duplicate.length > 0;
+// };
 
-const schema = yup.object().shape({
-  url: yup.string().min(1).url(),
-});
+const validation = (url, feeds) => {
+  setLocale({
+    string: {
+      min: 'NotBeEmpty',
+      url: 'ValidationError',
+    },
+    notOneOf: 'DuplicateUrl',
+  });
 
-const validation = (obj) => (
-  schema.validate(obj)
+  const schema = yup.object({
+    url: string().min(1).url().notOneOf(feeds),
+  });
+
+  return schema.validate(url)
     .then((data) => data)
-    .catch((e) => e.message));
+    .catch((e) => e);
+};
 
 export default () => {
   const i18nInstance = i18next.createInstance();
@@ -48,6 +58,7 @@ export default () => {
     modalId: '',
     readPosts: [],
     process: 'filling',
+    messageType: '',
   };
 
   const form = document.querySelector('.rss-form');
@@ -76,12 +87,12 @@ export default () => {
         btn.disabled = false;
 
         renderFeeds(state.feeds, i18nInstance);
-        renderItems(watchedState, state.items, i18nInstance);
+        renderItems(state.items, i18nInstance);
         modalAction(watchedState);
         break;
 
       case 'updated':
-        renderItems(watchedState, state.items, i18nInstance);
+        renderItems(state.items, i18nInstance);
         modalAction(watchedState);
         break;
 
@@ -120,28 +131,25 @@ export default () => {
     const formData = new FormData(e.currentTarget);
     const url = { url: formData.get('url') };
 
-    validation(url)
+    validation(url, state.feeds)
       .then((data) => {
-        if (data === 'url must be a valid URL') {
-          watchedState.message = 'ValidationError';
-          watchedState.process = 'error';
-        } else if (data === 'url must be at least 1 characters') {
-          watchedState.message = 'NotBeEmpty';
-          watchedState.process = 'error';
-        } else if (checkDuplicate(state, data.url)) {
-          watchedState.message = 'DuplicateUrl';
-          watchedState.process = 'error';
-        } else {
+        if (data.url) {
           watchedState.process = 'loading';
           downloadRss(watchedState, data.url)
             .then(() => {
               watchedState.message = 'SuccessAdding';
+              watchedState.messageType = 'success';
               watchedState.process = 'successfully';
             })
             .catch((err) => {
               watchedState.message = err.message;
+              watchedState.messageType = 'error';
               watchedState.process = 'error';
             });
+        } else {
+          watchedState.message = data.message;
+          watchedState.messageType = 'error';
+          watchedState.process = 'error';
         }
       });
   });

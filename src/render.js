@@ -1,6 +1,6 @@
 const renderFeeds = (feeds, i18nInstance) => {
   const container = document.querySelector('.feeds');
-  container.innerHTML = '';
+  container.textContent = '';
 
   const title = document.createElement('h3');
   title.textContent = i18nInstance.t('blocksTitle.feeds');
@@ -15,12 +15,12 @@ const renderFeeds = (feeds, i18nInstance) => {
     item.classList.add('list-group-item', 'border-0');
 
     const itemTitle = document.createElement('h4');
-    itemTitle.innerHTML = feed.title;
+    itemTitle.textContent = feed.title;
     itemTitle.classList.add('h6');
 
     const itemDesc = document.createElement('p');
     itemDesc.classList.add('small', 'text-black-50');
-    itemDesc.innerHTML = feed.description;
+    itemDesc.textContent = feed.description;
 
     item.append(itemTitle, itemDesc);
 
@@ -31,9 +31,9 @@ const renderFeeds = (feeds, i18nInstance) => {
   container.append(feedList);
 };
 
-const renderItems = (watchedState, posts, i18nInstance) => {
+const renderItems = (posts, i18nInstance) => {
   const container = document.querySelector('.posts');
-  container.innerHTML = '';
+  container.textContent = '';
 
   const title = document.createElement('h3');
   title.textContent = i18nInstance.t('blocksTitle.posts');
@@ -58,11 +58,11 @@ const renderItems = (watchedState, posts, i18nInstance) => {
     link.setAttribute('href', post.link);
     link.setAttribute('target', '_blank');
     link.setAttribute('data-id', post.id);
-    link.innerHTML = post.title;
+    link.textContent = post.title;
 
     const button = document.createElement('button');
     button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-    button.innerHTML = i18nInstance.t('buttons.view');
+    button.textContent = i18nInstance.t('buttons.view');
     button.setAttribute('type', 'button');
     button.setAttribute('data-bs-toggle', 'modal');
     button.setAttribute('data-bs-target', '#modal');
@@ -77,16 +77,30 @@ const renderItems = (watchedState, posts, i18nInstance) => {
   container.append(postList);
 };
 
-const renderMessage = (state, form, i18nInstance) => {
+const renderMessage = ({ messageType, message }, form, i18nInstance) => {
   const p = form.querySelector('.feedback');
   const input = form.querySelector('input');
 
-  switch (state.message) {
-    case 'SuccessAdding':
+  switch (messageType) {
+    case 'success':
       input.classList.remove('is-invalid');
       p.classList.remove('text-danger');
       p.classList.add('text-success');
-      p.textContent = i18nInstance.t(`messages.${state.message}`);
+      break;
+
+    case 'error':
+      input.classList.add('is-invalid');
+      p.classList.remove('text-success');
+      p.classList.add('text-danger');
+      break;
+
+    default:
+      throw new Error();
+  }
+
+  switch (message) {
+    case 'SuccessAdding':
+      p.textContent = i18nInstance.t(`messages.${message}`);
       form.reset();
       input.focus();
       break;
@@ -96,10 +110,7 @@ const renderMessage = (state, form, i18nInstance) => {
     case 'DuplicateUrl':
     case 'NotBeEmpty':
     case 'Network Error':
-      input.classList.add('is-invalid');
-      p.classList.remove('text-success');
-      p.classList.add('text-danger');
-      p.textContent = i18nInstance.t(`messages.${state.message}`);
+      p.textContent = i18nInstance.t(`messages.${message}`);
       break;
 
     default:
@@ -114,10 +125,10 @@ const renderModal = (inboxId, posts) => {
   const modal = document.querySelector('#modal');
 
   const modalTitle = modal.querySelector('.modal-title');
-  modalTitle.innerHTML = modalPost.title;
+  modalTitle.textContent = modalPost.title;
 
   const modalBody = modal.querySelector('.modal-body');
-  modalBody.innerHTML = modalPost.description;
+  modalBody.textContent = modalPost.description;
 
   const articleLinkButton = modal.querySelector('.full-article');
   articleLinkButton.setAttribute('href', modalPost.link);

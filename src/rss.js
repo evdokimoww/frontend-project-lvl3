@@ -31,7 +31,6 @@ const downloadRss = (watchedState, url) => axios
   });
 
 const updateRss = (watchedState, state) => {
-  console.log('update');
   const { feeds, items } = state;
   const promises = feeds.reverse().map((feed) => axios
     .get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(feed.url)}`)
