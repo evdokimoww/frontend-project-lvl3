@@ -13,16 +13,13 @@ import {
 } from './render';
 import { updateRss, downloadRss } from './rss';
 
-// const checkDuplicate = (state, inboxUrl) => {
-//   const duplicate = state.feeds.filter(({ url }) => url === inboxUrl);
-//   return duplicate.length > 0;
-// };
-
 const validation = (url, feeds) => {
   setLocale({
     string: {
       min: 'NotBeEmpty',
       url: 'ValidationError',
+    },
+    mixed: {
       notOneOf: 'DuplicateUrl',
     },
   });
@@ -130,8 +127,9 @@ export default () => {
 
     const formData = new FormData(e.currentTarget);
     const url = { url: formData.get('url') };
+    const feedsUrls = state.feeds.map((feed) => feed.url);
 
-    validation(url, watchedState.feeds)
+    validation(url, feedsUrls)
       .then((data) => {
         if (data.url) {
           watchedState.process = 'loading';

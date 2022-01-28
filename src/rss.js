@@ -26,7 +26,6 @@ const downloadRss = (watchedState, url) => axios
     watchedState.items.unshift(...feedItems);
   })
   .catch((e) => {
-    console.log(e);
     throw e;
   });
 
