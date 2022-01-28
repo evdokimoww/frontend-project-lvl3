@@ -23,8 +23,8 @@ const validation = (url, feeds) => {
     string: {
       min: 'NotBeEmpty',
       url: 'ValidationError',
+      notOneOf: 'DuplicateUrl',
     },
-    notOneOf: 'DuplicateUrl',
   });
 
   const schema = yup.object({
@@ -131,7 +131,7 @@ export default () => {
     const formData = new FormData(e.currentTarget);
     const url = { url: formData.get('url') };
 
-    validation(url, state.feeds)
+    validation(url, watchedState.feeds)
       .then((data) => {
         if (data.url) {
           watchedState.process = 'loading';
